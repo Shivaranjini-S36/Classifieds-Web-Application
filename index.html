@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReSellHub | Buy & Sell Used Products</title>
+<style>
+:root{--primary:#5b4bdb;--dark:#202039;--muted:#73738a;--bg:#f6f7fb;--white:#fff;--green:#16865c}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--dark)}
+header{background:white;position:sticky;top:0;z-index:10;border-bottom:1px solid #eee}
+.nav{max-width:1200px;margin:auto;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:800;color:var(--primary);cursor:pointer}
+nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+button{cursor:pointer;border:0;border-radius:9px;padding:11px 15px;font-weight:700;font-size:14px}
+.primary{background:var(--primary);color:white}
+.secondary{background:#eeecff;color:var(--primary)}
+.outline{background:white;border:1px solid #ddd;color:var(--dark)}
+.danger{background:#fff0f0;color:#c43d3d}
+.container{max-width:1200px;margin:auto;padding:24px 22px}
+.hero{background:linear-gradient(120deg,#28204f,#6252df);color:white;padding:42px 35px;border-radius:22px;display:grid;grid-template-columns:1.5fr 1fr;align-items:center;gap:24px}
+.hero h1{font-size:clamp(30px,4vw,48px);margin:0 0 14px;line-height:1.12}
+.hero p{color:#e4e1ff;line-height:1.7;max-width:550px}
+.hero-art{text-align:center;font-size:100px}
+.searchbar{display:flex;gap:10px;margin-top:20px;max-width:650px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;font:inherit;background:white}
+.searchbar input{flex:1}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:30px 0 16px}
+.section-head h2{margin:0;font-size:23px}
+.categories{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.category{background:white;border:1px solid #e8e7f0;border-radius:30px;padding:10px 16px}
+.category.active{background:var(--primary);color:white}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.card{background:white;border:1px solid #eeedf4;border-radius:15px;overflow:hidden;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 9px 25px #29204f12}
+.product-img{height:175px;display:flex;align-items:center;justify-content:center;background:#f0efff;font-size:65px;cursor:pointer}
+.card-body{padding:15px}
+.card h3{margin:8px 0;font-size:16px}
+.price{font-size:22px;font-weight:800;color:var(--primary);margin:9px 0}
+.muted{color:var(--muted);font-size:13px;line-height:1.6}
+.pill{display:inline-block;padding:5px 9px;background:#f0efff;color:var(--primary);border-radius:30px;font-size:11px;font-weight:700}
+.card-actions{display:flex;gap:8px;margin-top:13px}
+.card-actions button{flex:1;padding:10px 5px}
+.empty{text-align:center;background:white;border-radius:15px;padding:45px 15px;color:var(--muted);grid-column:1/-1}
+.page{display:none}
+.page.active{display:block}
+.panel{background:white;padding:24px;border:1px solid #eeedf4;border-radius:15px;margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:13px;font-weight:700}
+.field.full{grid-column:1/-1}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notice{padding:13px;border-radius:10px;background:#fff8e5;color:#825b00;font-size:13px;line-height:1.6;margin:15px 0}
+.success{background:#e9f8f0;color:#14774d}
+.order{background:white;border:1px solid #eee;border-radius:13px;padding:18px;margin:13px 0;display:grid;grid-template-columns:1fr auto;gap:12px}
+.order h3{margin:0 0 8px}
+.status{display:inline-block;border-radius:20px;padding:6px 10px;font-size:12px;background:#eeecff;color:var(--primary);font-weight:bold}
+.row-buttons{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+footer{text-align:center;color:var(--muted);padding:28px 15px;margin-top:30px;border-top:1px solid #eee}
+.modal{display:none;position:fixed;inset:0;background:#17152a99;z-index:30;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal-box{background:white;border-radius:18px;padding:25px;max-width:520px;width:100%;max-height:90vh;overflow:auto}
+.modal-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.modal-top h2{margin:0 0 18px}
+.close{background:#f1f1f5;padding:8px 12px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#24213b;color:white;padding:13px 20px;border-radius:10px;z-index:50;display:none;max-width:90%;text-align:center}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:950px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{grid-template-columns:1fr}.hero-art{display:none}}
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:1fr}.nav{padding:13px}.container{padding:17px 12px}.hero{padding:28px 20px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.product-img{height:140px}.order{grid-template-columns:1fr}nav{gap:7px}nav button{padding:9px;font-size:12px}.logo{font-size:21px}}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo" onclick="showPage('home')">♻ ReSellHub</div>
+    <nav>
+      <button class="outline" onclick="showPage('home')">Home</button>
+      <button class="outline" onclick="showPage('listings')">My Listings</button>
+      <button class="outline" onclick="showPage('orders')">My Orders</button>
+      <button class="secondary" onclick="showPage('sell')">+ Sell Item</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+<section id="home" class="page active">
+  <div class="hero">
+    <div>
+      <span class="pill">A smarter way to shop second-hand</span>
+      <h1>Give good things<br>a second life.</h1>
+      <p>Discover pre-loved products at great prices. Buy what you need, sell what you no longer use, and keep useful things in circulation.</p>
+      <div class="searchbar">
+        <input id="searchInput" placeholder="Search phones, books, furniture..." oninput="renderProducts()">
+        <button class="primary" onclick="renderProducts()">Search</button>
+      </div>
+    </div>
+    <div class="hero-art">🛍️ ♻️ 📦</div>
+  </div>
+
+  <div class="section-head"><h2>Explore categories</h2></div>
+  <div class="categories" id="categories">
+    <button class="category active" onclick="setCategory('All',this)">All Items</button>
+    <button class="category" onclick="setCategory('Electronics',this)">📱 Electronics</button>
+    <button class="category" onclick="setCategory('Fashion',this)">👕 Fashion</button>
+    <button class="category" onclick="setCategory('Books',this)">📚 Books</button>
+    <button class="category" onclick="setCategory('Furniture',this)">🪑 Furniture</button>
+    <button class="category" onclick="setCategory('Others',this)">📦 Others</button>
+  </div>
+
+  <div class="section-head">
+    <h2>Discover products</h2>
+    <span class="muted" id="resultCount"></span>
+  </div>
+  <div class="filters">
+    <input id="minPrice" type="number" min="0" placeholder="Minimum price" oninput="renderProducts()">
+    <select id="conditionFilter" onchange="renderProducts()">
+      <option value="All">Any condition</option>
+      <option>Like New</option><option>Good</option><option>Fair</option>
+    </select>
+    <select id="sortFilter" onchange="renderProducts()">
+      <option value="new">Recently added</option>
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+    </select>
+  </div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<section id="sell" class="page">
+  <div class="section-head"><h2 id="sellTitle">List a product</h2><button class="outline" onclick="showPage('home')">← Back to shop</button></div>
+  <div class="panel">
+    <p class="muted">Add clear details so buyers know exactly what you are selling.</p>
+    <form id="productForm">
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="field full"><label>Product name *</label><input id="pName" required maxlength="80" placeholder="e.g. Samsung Galaxy phone"></div>
+        <div class="field"><label>Price (₹) *</label><input id="pPrice" type="number" min="1" required placeholder="e.g. 5000"></div>
+        <div class="field"><label>Category *</label><select id="pCategory"><option>Electronics</option><option>Fashion</option><option>Books</option><option>Furniture</option><option>Others</option></select></div>
+        <div class="field"><label>Condition *</label><select id="pCondition"><option>Like New</option><option>Good</option><option>Fair</option></select></div>
+        <div class="field"><label>Product emoji</label><select id="pEmoji"><option value="📱">📱 Phone</option><option value="💻">💻 Laptop</option><option value="🎧">🎧 Headphones</option><option value="👕">👕 Clothes</option><option value="📚">📚 Books</option><option value="🪑">🪑 Furniture</option><option value="⌚">⌚ Watch</option><option value="🎒">🎒 Bag</option><option value="📦">📦 Other</option></select></div>
+        <div class="field full"><label>Description *</label><textarea id="pDescription" required rows="4" maxlength="600" placeholder="Describe the product, its age, condition, and any defects."></textarea></div>
+        <div class="field full"><label>Your display name *</label><input id="pSeller" required maxlength="60" placeholder="e.g. Shivi"></div>
+      </div>
+      <div class="notice">Demo note: listings are stored only in this browser. They are not visible to other users or devices.</div>
+      <div class="form-actions"><button class="primary" type="submit" id="saveProductBtn">Publish listing</button><button type="button" class="outline" onclick="resetProductForm()">Clear</button></div>
+    </form>
+  </div>
+</section>
+
+<section id="listings" class="page">
+  <div class="section-head"><h2>My Listings</h2><button class="primary" onclick="showPage('sell')">+ Add product</button></div>
+  <p class="muted">Products you have listed from this browser.</p>
+  <div id="myListings"></div>
+</section>
+
+<section id="orders" class="page">
+  <div class="section-head"><h2>My Orders</h2><button class="outline" onclick="showPage('home')">Continue shopping</button></div>
+  <p class="muted">Track your demo purchases and delivery statuses here.</p>
+  <div id="myOrders"></div>
+</section>
+</main>
+
+<footer>♻ ReSellHub — Buy better. Sell smarter. Waste less.<br><span class="small">Frontend demonstration · Payments are not processed.</span></footer>
+
+<div class="modal" id="productModal">
+  <div class="modal-box">
+    <div class="modal-top"><h2>Product details</h2><button class="close" onclick="closeModal('productModal')">✕</button></div>
+    <div id="productDetails"></div>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="modal-top"><h2>Checkout</h2><button class="close" onclick="closeModal('checkoutModal')">✕</button></div>
+    <div id="checkoutProduct"></div>
+    <form id="checkoutForm">
+      <div class="form-grid">
+        <div class="field full"><label>Full name *</label><input id="buyerName" required maxlength="80"></div>
+        <div class="field full"><label>Phone number *</label><input id="buyerPhone" type="tel" required pattern="[0-9+ ()-]{8,18}" placeholder="Your contact number"></div>
+        <div class="field full"><label>Delivery address *</label><textarea id="buyerAddress" required rows="3" maxlength="300" placeholder="House number, street, city, PIN code"></textarea></div>
+        <div class="field full"><label>Payment method</label><select id="paymentMethod"><option>Cash on Delivery (Demo)</option><option>Demo Online Payment</option></select></div>
+      </div>
+      <div class="notice">No money will be charged. Online payment is simulated, and Cash on Delivery is only a demonstration.</div>
+      <button class="primary" type="submit" style="width:100%">Place demo order</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const starterProducts = [
+ {id:1,name:"Wireless Headphones",price:799,category:"Electronics",condition:"Good",emoji:"🎧",description:"Comfortable wireless headphones in good working condition.",seller:"Demo Seller",date:Date.now()-4000},
+ {id:2,name:"Everyday Backpack",price:450,category:"Fashion",condition:"Like New",emoji:"🎒",description:"Lightweight backpack with spacious compartments.",seller:"Demo Seller",date:Date.now()-3000},
+ {id:3,name:"Programming Books Set",price:600,category:"Books",condition:"Good",emoji:"📚",description:"Useful programming books for beginners. Pages are in good condition.",seller:"Demo Seller",date:Date.now()-2000},
+ {id:4,name:"Study Table",price:1200,category:"Furniture",condition:"Fair",emoji:"🪑",description:"Used study table with a sturdy frame. Some visible signs of use.",seller:"Demo Seller",date:Date.now()-1000},
+ {id:5,name:"Smart Watch",price:950,category:"Electronics",condition:"Like New",emoji:"⌚",description:"A pre-loved smart watch in very good condition.",seller:"Demo Seller",date:Date.now()},
+ {id:6,name:"Casual T-Shirt",price:250,category:"Fashion",condition:"Good",emoji:"👕",description:"Comfortable casual T-shirt, gently used.",seller:"Demo Seller",date:Date.now()}
+];
+
+function readStore(key,fallback){
+ try {const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}
+ catch(e){return fallback}
+}
+function writeStore(key,value){localStorage.setItem(key,JSON.stringify(value))}
+function getProducts(){return readStore("rh_products",starterProducts)}
+function saveProducts(v){writeStore("rh_products",v)}
+function getOrders(){return readStore("rh_orders",[])}
+function saveOrders(v){writeStore("rh_orders",v)}
+let currentCategory="All",checkoutId=null;
+
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function money(value){return "₹"+Number(value).toLocaleString("en-IN")}
+function showToast(message){
+ const el=document.getElementById("toast");el.textContent=message;el.style.display="block";
+ clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display="none",2800);
+}
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(id==="home")renderProducts();
+ if(id==="listings")renderMyListings();
+ if(id==="orders")renderOrders();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function setCategory(cat,button){
+ currentCategory=cat;
+ document.querySelectorAll(".category").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");renderProducts();
+}
+function renderProducts(){
+ const query=(document.getElementById("searchInput")?.value||"").toLowerCase().trim();
+ const min=Number(document.getElementById("minPrice")?.value||0);
+ const condition=document.getElementById("conditionFilter")?.value||"All";
+ const sort=document.getElementById("sortFilter")?.value||"new";
+ let items=getProducts().filter(p=>{
+  const matches=(p.name+" "+p.description+" "+p.category).toLowerCase().includes(query);
+  return matches&&(currentCategory==="All"||p.category===currentCategory)&&p.price>=min&&(condition==="All"||p.condition===condition)&&p.status!=="Sold";
+ });
+ if(sort==="low")items.sort((a,b)=>a.price-b.price);
+ else if(sort==="high")items.sort((a,b)=>b.price-a.price);
+ else items.sort((a,b)=>b.date-a.date);
+ document.getElementById("resultCount").textContent=items.length+" product"+(items.length===1?"":"s");
+ const grid=document.getElementById("productGrid");
+ if(!items.length){grid.innerHTML='<div class="empty">🔎<h3>No products found</h3><p>Try another search or category.</p><button class="secondary" onclick="clearFilters()">Clear filters</button></div>';return}
+ grid.innerHTML=items.map(p=>`
+ <article class="card">
+  <div class="product-img" onclick="openProduct(${p.id})">${escapeHTML(p.emoji||"📦")}</div>
+  <div class="card-body">
+   <span class="pill">${escapeHTML(p.category)}</span>
+   <h3>${escapeHTML(p.name)}</h3>
+   <div class="price">${money(p.price)}</div>
+   <div class="muted">${escapeHTML(p.condition)} · Seller: ${escapeHTML(p.seller)}</div>
+   <div class="card-actions">
+    <button class="secondary" onclick="openProduct(${p.id})">View</button>
+    <button class="primary" onclick="startCheckout(${p.id})">Buy Now</button>
+   </div>
+  </div>
+ </article>`).join("");
+}
+function clearFilters(){
+ document.getElementById("searchInput").value="";
+ document.getElementById("minPrice").value="";
+ document.getElementById("conditionFilter").value="All";
+ currentCategory="All";
+ document.querySelectorAll(".category").forEach((b,i)=>b.classList.toggle("active",i===0));
+ renderProducts();
+}
+function openProduct(id){
+ const p=getProducts().find(x=>x.id===id);if(!p)return;
+ document.getElementById("productDetails").innerHTML=`
+ <div style="font-size:90px;text-align:center;background:#f0efff;border-radius:14px;padding:22px">${escapeHTML(p.emoji||"📦")}</div>
+ <p><span class="pill">${escapeHTML(p.category)}</span> <span class="pill">${escapeHTML(p.condition)}</span></p>
+ <h2>${escapeHTML(p.name)}</h2><div class="price">${money(p.price)}</div>
+ <p>${escapeHTML(p.description)}</p>
+ <p class="muted">Listed by ${escapeHTML(p.seller)}</p>
+ <button class="primary" style="width:100%" onclick="closeModal('productModal');startCheckout(${p.id})">Buy Now</button>`;
+ document.getElementById("productModal").classList.add("show");
+}
+function startCheckout(id){
+ const p=getProducts().find(x=>x.id===id);
+ if(!p||p.status==="Sold"){showToast("This product is no longer available.");return}
+ checkoutId=id;
+ document.getElementById("checkoutProduct").innerHTML=`<div class="panel"><b>${escapeHTML(p.emoji)} ${escapeHTML(p.name)}</b><div class="price">${money(p.price)}</div><div class="muted">Seller: ${escapeHTML(p.seller)}</div></div>`;
+ document.getElementById("checkoutModal").classList.add("show");
+}
+document.getElementById("checkoutForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const products=getProducts(),p=products.find(x=>x.id===checkoutId);
+ if(!p||p.status==="Sold"){closeModal("checkoutModal");showToast("Sorry, this product is no longer available.");return}
+ const order={
+  id:"RH"+Date.now().toString().slice(-9),
+  productId:p.id,productName:p.name,emoji:p.emoji,price:p.price,seller:p.seller,
+  buyer:document.getElementById("buyerName").value.trim(),
+  phone:document.getElementById("buyerPhone").value.trim(),
+  address:document.getElementById("buyerAddress").value.trim(),
+  payment:document.getElementById("paymentMethod").value,
+  paymentStatus:"Not charged — demo only",
+  status:"Order Placed",date:new Date().toISOString()
+ };
+ saveOrders([order,...getOrders()]);
+ p.status="Sold";saveProducts(products);
+ this.reset();closeModal("checkoutModal");renderProducts();showPage("orders");
+ showToast("Demo order placed successfully!");
+});
+document.getElementById("productForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const products=getProducts(),editId=Number(document.getElementById("editId").value);
+ const old=products.find(p=>p.id===editId);
+ const item={
+  id:old?old.id:Date.now(),name:document.getElementById("pName").value.trim(),
+  price:Number(document.getElementById("pPrice").value),
+  category:document.getElementById("pCategory").value,
+  condition:document.getElementById("pCondition").value,
+  emoji:document.getElementById("pEmoji").value,
+  description:document.getElementById("pDescription").value.trim(),
+  seller:document.getElementById("pSeller").value.trim(),
+  date:old?old.date:Date.now(),status:old?(old.status||"Available"):"Available"
+ };
+ if(!item.name||!item.description||!item.seller||item.price<=0){showToast("Please complete all required fields.");return}
+ if(old){saveProducts(products.map(p=>p.id===editId?item:p));showToast("Listing updated.");}
+ else{saveProducts([item,...products]);showToast("Product listed successfully!");}
+ resetProductForm();showPage("listings");
+});
+function resetProductForm(){
+ document.getElementById("productForm").reset();
+ document.getElementById("editId").value="";
+ document.getElementById("sellTitle").textContent="List a product";
+ document.getElementById("saveProductBtn").textContent="Publish listing";
+}
+function renderMyListings(){
+ const mine=getProducts();
+ const el=document.getElementById("myListings");
+ if(!mine.length){el.innerHTML='<div class="empty">You have no listings yet.</div>';return}
+ el.innerHTML=mine.map(p=>`
+ <div class="order">
+  <div><h3>${escapeHTML(p.emoji)} ${escapeHTML(p.name)}</h3><div class="price">${money(p.price)}</div><p class="muted">${escapeHTML(p.category)} · ${escapeHTML(p.condition)} · Seller: ${escapeHTML(p.seller)}</p><span class="status">${escapeHTML(p.status||"Available")}</span></div>
+  <div class="row-buttons">
+   <button class="secondary" onclick="editProduct(${p.id})">Edit</button>
+   <button class="danger" onclick="deleteProduct(${p.id})">Delete</button>
+  </div>
+ </div>`).join("");
+}
+function editProduct(id){
+ const p=getProducts().find(x=>x.id===id);if(!p)return;
+ if(p.status==="Sold"){showToast("Sold products cannot be edited in this demo.");return}
+ document.getElementById("editId").value=p.id;
+ document.getElementById("pName").value=p.name;
+ document.getElementById("pPrice").value=p.price;
+ document.getElementById("pCategory").value=p.category;
+ document.getElementById("pCondition").value=p.condition;
+ document.getElementById("pEmoji").value=p.emoji;
+ document.getElementById("pDescription").value=p.description;
+ document.getElementById("pSeller").value=p.seller;
+ document.getElementById("sellTitle").textContent="Edit listing";
+ document.getElementById("saveProductBtn").textContent="Save changes";
+ showPage("sell");
+}
+function deleteProduct(id){
+ if(!confirm("Delete this listing?"))return;
+ saveProducts(getProducts().filter(p=>p.id!==id));
+ renderMyListings();renderProducts();showToast("Listing deleted.");
+}
+function renderOrders(){
+ const orders=getOrders(),el=document.getElementById("myOrders");
+ if(!orders.length){el.innerHTML='<div class="empty">📦<h3>No orders yet</h3><p>When you place a demo order, it will appear here.</p><button class="primary" onclick="showPage(\'home\')">Explore products</button></div>';return}
+ el.innerHTML=orders.map(o=>`
+ <div class="order">
+  <div>
+   <h3>${escapeHTML(o.emoji)} ${escapeHTML(o.productName)}</h3>
+   <div class="price">${money(o.price)}</div>
+   <p class="muted">Order ID: ${escapeHTML(o.id)}<br>Ordered: ${new Date(o.date).toLocaleString()}<br>Buyer: ${escapeHTML(o.buyer)}<br>Delivery address: ${escapeHTML(o.address)}<br>Payment: ${escapeHTML(o.payment)}<br>Payment status: ${escapeHTML(o.paymentStatus)}</p>
+   <span class="status">${escapeHTML(o.status)}</span>
+  </div>
+  <div class="row-buttons">
+   ${o.status==="Order Placed"?`<button class="outline" onclick="cancelDemoOrder('${escapeHTML(o.id)}')">Cancel demo order</button>`:""}
+  </div>
+ </div>`).join("");
+}
+function cancelDemoOrder(id){
+ const orders=getOrders(),o=orders.find(x=>x.id===id);
+ if(!o||o.status!=="Order Placed"){showToast("This order can no longer be cancelled.");return}
+ o.status="Cancelled";saveOrders(orders);
+ const products=getProducts(),p=products.find(x=>x.id===o.productId);
+ if(p){p.status="Available";saveProducts(products)}
+ renderOrders();renderProducts();showToast("Demo order cancelled.");
+}
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+if(!localStorage.getItem("rh_products"))saveProducts(starterProducts);
+renderProducts();
+</script>
+</body>
+</html>
